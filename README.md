@@ -159,13 +159,14 @@ Required GitHub secrets:
 
 ## License
 
-Add your preferred license file (for example `MIT`) and update this section.
+This project was created for academic purposes and does not currently use an open-source license.
 
 ## Screenshots
 
-Add screenshots in your repo and link them here, for example:
+### Alarm Reminder
 
-```md
-![Dashboard](docs/images/dashboard.png)
-![Alert](docs/images/alert.png)
-```
+![Main Dashboard](screenshots/Screenshot%202026-04-25%20215100.png)
+
+### Roadmap View
+
+![Roadmap View](screenshots/Screenshot%202026-04-25%20215042.png)
