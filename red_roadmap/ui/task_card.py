@@ -22,6 +22,7 @@ class TaskCard(QFrame):
     add_micro = Signal(int, str)
     delete_micro = Signal(int)
     edit_micro = Signal(int, str)
+    edit_task = Signal(int)
     delete_task = Signal(int)
     start_task = Signal(int)
     selection_toggled = Signal(int, bool)
@@ -95,12 +96,16 @@ class TaskCard(QFrame):
         self.complete_btn = QPushButton('Complete')
         self.complete_btn.clicked.connect(lambda: self.task_toggled.emit(int(self.task['id']), True))
 
+        self.edit_btn = QPushButton('Edit')
+        self.edit_btn.clicked.connect(lambda: self.edit_task.emit(int(self.task['id'])))
+
         self.delete_btn = QPushButton('Delete')
         self.delete_btn.clicked.connect(lambda: self.delete_task.emit(int(self.task['id'])))
 
         action_row.addWidget(self.start_btn)
         action_row.addWidget(self.expand_btn)
         action_row.addWidget(self.complete_btn)
+        action_row.addWidget(self.edit_btn)
         action_row.addWidget(self.delete_btn)
         action_row.addStretch(1)
 

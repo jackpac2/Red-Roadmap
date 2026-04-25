@@ -49,6 +49,7 @@ class MainWindow(QWidget):
         self.selected_task_ids: Set[int] = set()
         self.expanded_task_ids: Set[int] = set()
         self.task_cards: Dict[int, TaskCard] = {}
+        self.task_lookup: Dict[int, dict] = {}
         self._pending_micro_focus_task_id: Optional[int] = None
 
         self.setWindowTitle('Red Roadmap')
@@ -224,6 +225,7 @@ class MainWindow(QWidget):
 
         current_ids = {int(task['id']) for task in tasks}
         self.expanded_task_ids.intersection_update(current_ids)
+        self.task_lookup = {int(task['id']): task for task in tasks}
 
         self._render_timeline(tasks)
         self._render_tasks(tasks)
@@ -273,6 +275,7 @@ class MainWindow(QWidget):
             card.add_micro.connect(self.on_add_micro)
             card.delete_micro.connect(self.on_delete_micro)
             card.edit_micro.connect(self.on_edit_micro)
+            card.edit_task.connect(self.on_edit_task)
             card.delete_task.connect(self.on_delete_task)
             card.start_task.connect(self.on_start_task)
             card.selection_toggled.connect(self.on_selection_changed)
@@ -431,6 +434,81 @@ class MainWindow(QWidget):
             return
 
         self.expanded_task_ids.discard(task_id)
+        self.refresh()
+
+    def on_edit_task(self, task_id: int) -> None:
+        task = self.task_lookup.get(task_id)
+        if not task:
+            QMessageBox.warning(self, 'Task Not Found', 'Could not load this task for editing.')
+            return
+
+        dialog = QDialog(self)
+        dialog.setWindowTitle('Edit Mission')
+        form = QFormLayout(dialog)
+
+        title = QLineEdit(str(task['title']))
+        priority = QComboBox()
+        priority.addItems(['LOW', 'MEDIUM', 'HIGH'])
+        priority.setCurrentText(str(task['priority']))
+
+        mode = QComboBox()
+        mode.addItems(['AT_PC', 'AWAY', 'FLEXIBLE'])
+        mode.setCurrentText(str(task['mode']))
+
+        reminder_check = QCheckBox('Set reminder')
+        reminder = QDateTimeEdit(QDateTime.currentDateTime())
+        reminder.setCalendarPopup(True)
+        reminder.setDisplayFormat('yyyy-MM-dd HH:mm')
+
+        reminder_value = task.get('reminder_at')
+        if isinstance(reminder_value, datetime):
+            reminder.setDateTime(QDateTime(reminder_value))
+            reminder_check.setChecked(True)
+            reminder.setEnabled(True)
+        else:
+            reminder_check.setChecked(False)
+            reminder.setEnabled(False)
+
+        reminder_check.toggled.connect(reminder.setEnabled)
+
+        save = QPushButton('Save')
+        cancel = QPushButton('Cancel')
+        save.clicked.connect(dialog.accept)
+        cancel.clicked.connect(dialog.reject)
+
+        btn_row = QHBoxLayout()
+        btn_row.addWidget(save)
+        btn_row.addWidget(cancel)
+
+        form.addRow('Title', title)
+        form.addRow('Priority', priority)
+        form.addRow('Mode', mode)
+        form.addRow('', reminder_check)
+        form.addRow('Reminder', reminder)
+        form.addRow(btn_row)
+
+        if dialog.exec() != QDialog.DialogCode.Accepted:
+            return
+
+        updated_title = title.text().strip()
+        if not updated_title:
+            QMessageBox.warning(self, 'Validation', 'Task title is required.')
+            return
+
+        reminder_at = reminder.dateTime().toPython() if reminder_check.isChecked() else None
+
+        try:
+            self.repo.update_task(
+                task_id,
+                updated_title,
+                priority.currentText(),
+                mode.currentText(),
+                reminder_at,
+            )
+        except Error as exc:
+            QMessageBox.critical(self, 'Database Error', f'Failed to update task:\n{exc}')
+            return
+
         self.refresh()
 
     def on_task_toggled(self, task_id: int, completed: bool) -> None:

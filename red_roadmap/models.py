@@ -84,6 +84,27 @@ class TaskRepository:
             cursor.close()
         return int(task_id)
 
+    def update_task(
+        self,
+        task_id: int,
+        title: str,
+        priority: str,
+        mode: str,
+        reminder_at: Optional[datetime],
+    ) -> None:
+        query = """
+            UPDATE tasks
+            SET title = %s,
+                priority = %s,
+                mode = %s,
+                reminder_at = %s
+            WHERE id = %s
+        """
+        with self.db.connect() as connection:
+            cursor = connection.cursor()
+            cursor.execute(query, (title, priority, mode, reminder_at, task_id))
+            cursor.close()
+
     def add_micro_action(self, task_id: int, title: str) -> int:
         with self.db.connect() as connection:
             cursor = connection.cursor()
