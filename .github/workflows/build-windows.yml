@@ -2,17 +2,18 @@ name: Build Windows EXE
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches: [main]
   workflow_dispatch:
 
 jobs:
   build-windows:
     runs-on: windows-latest
 
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: "false"
+
     steps:
-      - name: Checkout repo
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Set up Python
@@ -20,42 +21,29 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Install dependencies
-        shell: bash
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: "npm"
+
+      - name: Install Python dependencies
+        shell: pwsh
         run: |
           python -m pip install --upgrade pip
-          pip install -r red_roadmap/requirements.txt
-          pip install pyinstaller pytest
+          pip install -r backend\requirements.txt
+          pip install pyinstaller
 
-      - name: Run tests
-        shell: bash
-        run: |
-          pytest
-        continue-on-error: true
+      - name: Install Node dependencies
+        shell: pwsh
+        run: npm install
 
-      - name: Create .env file
-        shell: bash
-        run: |
-          cat > red_roadmap/.env <<EOF
-          DB_HOST=${{ secrets.DB_HOST }}
-          DB_PORT=${{ secrets.DB_PORT }}
-          DB_USER=${{ secrets.DB_USER }}
-          DB_PASSWORD=${{ secrets.DB_PASSWORD }}
-          DB_NAME=${{ secrets.DB_NAME }}
-          EOF
+      - name: Build Windows app
+        shell: pwsh
+        run: npm run build
 
-      - name: Build EXE
-        shell: bash
-        run: |
-          pyinstaller --noconfirm --windowed --onefile \
-            --name RedRoadmap \
-            --icon red_roadmap/icon.ico \
-            --paths red_roadmap \
-            --add-data "red_roadmap/.env;." \
-            red_roadmap/app.py
-
-      - name: Upload EXE artifact
+      - name: Upload release artifact
         uses: actions/upload-artifact@v4
         with:
-          name: RedRoadmap-Windows
-          path: dist/RedRoadmap.exe
+          name: red-roadmap-windows
+          path: release/**

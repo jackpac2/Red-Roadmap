@@ -1,0 +1,52 @@
+{
+  "name": "red-roadmap-desktop",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Red Roadmap Electron desktop shell",
+  "main": "desktop/main.js",
+  "workspaces": [
+    "frontend"
+  ],
+  "scripts": {
+    "dev": "concurrently -k \"npm run dev --workspace frontend\" \"wait-on http://127.0.0.1:5173 && set ELECTRON_RUN_AS_NODE=&& electron .\"",
+    "build:frontend": "npm run build --workspace frontend",
+    "build:backend": "pyinstaller --noconfirm --clean --onefile --name RedRoadmapBackend --distpath desktop/backend-dist backend/main.py",
+    "build:electron": "electron-builder --win --x64",
+    "build": "npm run build:frontend && npm run build:backend && npm run build:electron"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0",
+    "electron": "^33.2.1",
+    "electron-builder": "^25.1.8",
+    "wait-on": "^8.0.1"
+  },
+  "build": {
+    "appId": "com.redroadmap.app",
+    "productName": "Red Roadmap",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "desktop/**/*",
+      "frontend/dist/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "desktop/backend-dist",
+        "to": "backend",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "target": "nsis",
+      "icon": "red_roadmap/icon.ico"
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  }
+}

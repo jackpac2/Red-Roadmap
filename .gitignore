@@ -1,6 +1,8 @@
 # Virtual environments
 .venv/
 red_roadmap/.venv/
+frontend/node_modules/
+node_modules/
 
 # Python cache
 __pycache__/
@@ -11,10 +13,17 @@ __pycache__/
 # PyInstaller build output
 build/
 dist/
+desktop/backend-dist/
+release/
 *.spec
 
 # Environment files
 red_roadmap/.env
+backend/.env
+.env
+
+# Frontend build output
+frontend/dist/
 
 # VS Code
 .vscode/

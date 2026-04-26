@@ -1,171 +1,135 @@
 # Red Roadmap
 
-A desktop mission/task manager built to help you start work and keep momentum.
+Red Roadmap is a local-first mission/task manager with MySQL storage. The original PySide6 desktop app is still available, and the repo now also contains the migration path to a modern Electron desktop app with a FastAPI backend and React/Tailwind frontend.
 
-`Red Roadmap` is a local-first Python app with a PySide6 UI and MySQL storage. It supports tasks, micro-actions, reminders, and fullscreen attention alerts when it is time to act.
+## Architecture
 
-## Highlights
+- `red_roadmap/` contains the existing PySide6 app and remains runnable.
+- `backend/` contains the FastAPI API, MySQL database adapter, Pydantic models, and task/reminder services.
+- `frontend/` contains the Vite + React + Tailwind dashboard UI.
+- `desktop/` contains the Electron main process that starts the Python backend and opens the React UI.
 
-- Desktop app (Python + PySide6)
-- MySQL-backed task and micro-action storage
-- Basic mission dashboard with live status counts
-- Add, edit, complete, and delete missions
-- Add/edit/delete/check micro-actions
-- Fullscreen red alert with audio loop
-- Snooze, away mode, start now, and mark complete actions
-- Reminder engine checks every 10 seconds
-- Local-only, no cloud services required
-
-## Current UI
-
-- Header: app title, subtitle, date/time, execution score
-- Progress card: completed/total + progress bar
-- Status strip: active, pending, completed, away, snoozed
-- Mission list: large scroll area with mission cards
-- Timeline panel: quick left-side roadmap list
-
-## Reminder behavior
-
-A mission needs attention if any condition is true:
-
-1. `status = PENDING` and `reminder_at <= NOW()`
-2. `status = ACTIVE` and `next_check_at <= NOW()` and no recent progress
-3. `status = AWAY` and `next_check_at <= NOW()`
-
-When attention is needed, the app opens a fullscreen alert with controls:
-
-- `START NOW`
-- `SNOOZE 5`
-- `SNOOZE 15`
-- `AWAY FROM PC`
-- `MARK COMPLETE`
-
-## Project structure
-
-```text
-red_roadmap/
-  app.py
-  db.py
-  models.py
-  reminder_engine.py
-  audio.py
-  schema.sql
-  requirements.txt
-  .env.example
-  icon.ico
-  ui/
-    main_window.py
-    task_card.py
-    alert_window.py
-```
+The database schema is still `red_roadmap/schema.sql`; no migration is required for this first pass.
 
 ## Requirements
 
 - Python 3.10+
 - MySQL Server 8+
-- Windows/macOS/Linux (Windows is the primary tested target)
+- Node.js 20+
+- Windows for the packaged `.exe` flow
 
-## Quick start
-
-### 1) Create virtual environment
-
-```bash
-python -m venv .venv
-```
-
-Windows PowerShell:
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-### 2) Install dependencies
-
-```bash
-pip install -r red_roadmap/requirements.txt
-```
-
-### 3) Create database
+## Database Setup
 
 ```sql
 CREATE DATABASE red_roadmap CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 ```
 
-### 4) Apply schema and seed data
-
-```bash
+```powershell
 mysql -u root -p red_roadmap < red_roadmap/schema.sql
 ```
 
-### 5) Configure environment variables
-
 Copy `red_roadmap/.env.example` to `red_roadmap/.env` and set:
 
-- `DB_HOST`
-- `DB_PORT`
-- `DB_USER`
-- `DB_PASSWORD`
-- `DB_NAME`
+```env
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=your_password
+DB_NAME=red_roadmap
+```
 
-### 6) Run app
+Do not commit `.env` files.
 
-```bash
+## Run The Legacy PySide App
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r red_roadmap/requirements.txt
 cd red_roadmap
 python app.py
 ```
 
-## Build Windows executable
+## Run The FastAPI Backend
 
-From repo root:
+From the repo root:
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+pip install -r backend/requirements.txt
+python -m uvicorn backend.main:app --host 127.0.0.1 --port 8000 --reload
+```
+
+API health check:
+
+```powershell
+Invoke-RestMethod http://127.0.0.1:8000/health
+```
+
+## Run The React Frontend
+
+```powershell
+npm install
+npm run dev --workspace frontend
+```
+
+Open `http://127.0.0.1:5173`. The frontend calls the FastAPI backend at `http://127.0.0.1:8000` by default. Override with `VITE_API_BASE_URL` if needed.
+
+## Run The Electron App In Development
+
+```powershell
+npm install
+npm run dev
+```
+
+Electron starts the FastAPI backend silently, waits for `/health`, and opens the Vite UI.
+
+## Build The New Windows App
+
+```powershell
+.\.venv\Scripts\Activate.ps1
+pip install -r backend/requirements.txt
+pip install pyinstaller
+npm install
+npm run build
+```
+
+Build output is written to `release/`.
+
+## Legacy PyInstaller Build
+
+The old PySide-only build is still possible while the Electron app is being verified:
 
 ```powershell
 pip install pyinstaller
 pyinstaller --noconfirm --windowed --onefile --name RedRoadmap --icon red_roadmap/icon.ico --paths red_roadmap --add-data "red_roadmap/.env;." red_roadmap/app.py
 ```
 
-Output:
+## API Surface
 
-- `dist/RedRoadmap.exe`
+The FastAPI backend exposes:
 
-## Desktop shortcut (Windows)
+- `GET /api/missions`
+- `POST /api/missions`
+- `PUT /api/missions/{task_id}`
+- `PATCH /api/missions/{task_id}`
+- `DELETE /api/missions/{task_id}`
+- `POST /api/missions/{task_id}/complete`
+- `POST /api/missions/{task_id}/start`
+- `GET /api/missions/{task_id}/steps`
+- `POST /api/missions/{task_id}/steps`
+- `PUT /api/steps/{step_id}`
+- `DELETE /api/steps/{step_id}`
+- `POST /api/steps/{step_id}/complete`
+- `GET /api/dashboard/stats`
+- `GET /api/dashboard/progress`
+- `GET /api/dashboard/execution-score`
+- `GET /api/roadmap/timeline`
+- `GET /api/reminders/next-attention`
+- `POST /api/missions/{task_id}/alert-action`
 
-1. Right-click `dist/RedRoadmap.exe`
-2. Select `Send to > Desktop (create shortcut)`
-3. Open shortcut `Properties`
-4. Set `Start in` to your `dist` folder path
+## Notes
 
-## GitHub Actions (Windows build)
-
-This repo includes:
-
-- `.github/workflows/build-windows.yml`
-
-It builds a Windows EXE and uploads it as a workflow artifact.
-
-Required GitHub secrets:
-
-- `DB_HOST`
-- `DB_PORT`
-- `DB_USER`
-- `DB_PASSWORD`
-- `DB_NAME`
-
-## Troubleshooting
-
-- `Could not connect to MySQL`: verify `.env` values and ensure MySQL is running.
-- No alert appears: confirm a task has a due `reminder_at` or due `next_check_at`.
-- No audio: on non-Windows systems it falls back to app beep.
-- Scroll feels limited: increase app window height and ensure mission list has focus.
-
-## License
-
-Add your preferred license file (for example `MIT`) and update this section.
-
-## Screenshots
-
-Add screenshots in your repo and link them here, for example:
-
-```md
-![Dashboard](docs/images/dashboard.png)
-![Alert](docs/images/alert.png)
-```
+- The PySide app has not been deleted or rewired.
+- The new backend reads `backend/.env`, `red_roadmap/.env`, or root `.env`, in that order.
+- The Electron alert/audio experience is not yet a fullscreen replacement for the old PySide alert window; the backend exposes the reminder action endpoints needed to build that UI next.
