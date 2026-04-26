@@ -31,7 +31,14 @@ export const api = {
   createMission: (payload) => request("/api/missions", { method: "POST", body: JSON.stringify(payload) }),
   updateMission: (id, payload) => request(`/api/missions/${id}`, { method: "PUT", body: JSON.stringify(payload) }),
   patchMission: (id, payload) => request(`/api/missions/${id}`, { method: "PATCH", body: JSON.stringify(payload) }),
+  updateReminder: (id, reminderAt) =>
+    request(`/api/missions/${id}`, { method: "PATCH", body: JSON.stringify({ reminder_at: reminderAt }) }),
+  clearReminder: (id) =>
+    request(`/api/missions/${id}`, { method: "PATCH", body: JSON.stringify({ clear_reminder: true }) }),
+  snoozeMission: (id, minutes = 5) =>
+    request(`/api/missions/${id}/snooze`, { method: "POST", body: JSON.stringify({ minutes }) }),
   deleteMission: (id) => request(`/api/missions/${id}`, { method: "DELETE" }),
+  deleteAllMissions: () => request("/api/missions", { method: "DELETE" }),
   completeMission: (id, completed = true) =>
     request(`/api/missions/${id}/complete`, { method: "POST", body: JSON.stringify({ completed }) }),
   startMission: (id) => request(`/api/missions/${id}/start`, { method: "POST" }),

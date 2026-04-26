@@ -2,7 +2,7 @@ import { Filter, Search } from "lucide-react";
 
 export function FilterBar({ query, setQuery, status, setStatus, priority, setPriority }) {
   return (
-    <div className="flex flex-col gap-3 rounded-lg border border-line bg-panel p-3 shadow-panel xl:flex-row xl:items-center">
+    <div className="flex flex-col gap-3 rounded-lg border border-line bg-panel/90 p-3 shadow-panel xl:flex-row xl:items-center">
       <div className="flex min-w-0 flex-1 items-center gap-2 rounded-lg border border-cyanLine/50 bg-ink px-3 py-2">
         <Search size={17} className="text-neon" />
         <input

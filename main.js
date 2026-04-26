@@ -16,7 +16,6 @@ let systemAlarmTimer = null;
 const alertedReminderKeys = new Set();
 
 app.commandLine.appendSwitch("autoplay-policy", "no-user-gesture-required");
-app.setPath("userData", path.join(app.getPath("appData"), "Red Roadmap"));
 
 function ensureLogFile() {
   if (logFilePath) {
@@ -159,13 +158,12 @@ function frontendEntry() {
 }
 
 function envCandidates() {
-  return [...new Set([
-    path.join(app.getPath("userData"), ".env"),
+  return [
     path.join(rootPath(), "backend", ".env"),
     path.join(rootPath(), "red_roadmap", ".env"),
     path.join(rootPath(), ".env"),
     path.join(process.resourcesPath || rootPath(), ".env")
-  ])];
+  ];
 }
 
 function logStartupContext() {
@@ -302,10 +300,6 @@ async function backendStatus(attempt = undefined) {
       ok: health.ok
     });
     if (!health.ok) {
-      log("backend health response body", {
-        attempt,
-        body: await health.text().catch((error) => `Unable to read response body: ${error.message}`)
-      });
       return "down";
     }
 
@@ -317,10 +311,6 @@ async function backendStatus(attempt = undefined) {
       ok: openapi.ok
     });
     if (!openapi.ok) {
-      log("backend openapi response body", {
-        attempt,
-        body: await openapi.text().catch((error) => `Unable to read response body: ${error.message}`)
-      });
       return "down";
     }
 

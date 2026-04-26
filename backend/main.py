@@ -16,6 +16,7 @@ from backend.models import (
     MissionPatch,
     MissionUpdate,
     ProgressSummary,
+    ReminderUpdate,
     SnoozeRequest,
     Step,
     StepCreate,
@@ -95,9 +96,33 @@ def patch_mission(task_id: int, payload: MissionPatch, service: TaskService = De
     return task
 
 
+@app.put("/api/missions/{task_id}/reminder", response_model=Mission)
+def set_mission_reminder(task_id: int, payload: ReminderUpdate, service: TaskService = Depends(get_task_service)):
+    service.set_task_reminder(task_id, payload.reminder_at)
+    task = service.get_task(task_id)
+    if task is None:
+        raise HTTPException(status_code=404, detail="Mission not found.")
+    return task
+
+
+@app.delete("/api/missions/{task_id}/reminder", response_model=Mission)
+def clear_mission_reminder(task_id: int, service: TaskService = Depends(get_task_service)):
+    service.clear_task_reminder(task_id)
+    task = service.get_task(task_id)
+    if task is None:
+        raise HTTPException(status_code=404, detail="Mission not found.")
+    return task
+
+
 @app.delete("/api/missions/{task_id}", status_code=204)
 def delete_mission(task_id: int, service: TaskService = Depends(get_task_service)):
     service.delete_task(task_id)
+    return None
+
+
+@app.delete("/api/missions", status_code=204)
+def delete_all_missions(service: TaskService = Depends(get_task_service)):
+    service.delete_all_tasks()
     return None
 
 
@@ -186,7 +211,8 @@ def next_attention(reminders: ReminderService = Depends(get_reminder_service)):
 
 @app.get("/api/reminders/due", response_model=list[Mission])
 def due_reminders(reminders: ReminderService = Depends(get_reminder_service)):
-    return reminders.get_due_reminders()
+    next_due = reminders.get_next_attention_task()
+    return [next_due] if next_due else []
 
 
 @app.post("/api/missions/{task_id}/snooze", response_model=Mission)
@@ -220,4 +246,4 @@ def alert_action(
 if __name__ == "__main__":
     import uvicorn
 
-    uvicorn.run("backend.main:app", host="127.0.0.1", port=8000, reload=False)
+    uvicorn.run(app, host="127.0.0.1", port=8000, reload=False)

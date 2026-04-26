@@ -4,7 +4,7 @@ export function MissionTimeline({ items }) {
   const timelineItems = Array.isArray(items) ? items : [];
 
   return (
-    <section className="rounded-lg border border-line bg-panel p-4 shadow-panel">
+    <section className="rounded-lg border border-line bg-panel/90 p-4 shadow-panel">
       <div className="mb-4 text-sm font-black uppercase text-text">Mission Timeline</div>
       <div className="space-y-3">
         {timelineItems.slice(0, 14).map((item) => {

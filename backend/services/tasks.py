@@ -121,10 +121,36 @@ class TaskService:
             cursor.execute(f"UPDATE tasks SET {', '.join(updates)} WHERE id = %s", tuple(params))
             cursor.close()
 
+    def set_task_reminder(self, task_id: int, reminder_at: datetime) -> None:
+        with self.db.connect() as connection:
+            cursor = connection.cursor()
+            cursor.execute(
+                """
+                UPDATE tasks
+                SET reminder_at = %s,
+                    next_check_at = NULL
+                WHERE id = %s
+                """,
+                (reminder_at, task_id),
+            )
+            cursor.close()
+
+    def clear_task_reminder(self, task_id: int) -> None:
+        with self.db.connect() as connection:
+            cursor = connection.cursor()
+            cursor.execute("UPDATE tasks SET reminder_at = NULL WHERE id = %s", (task_id,))
+            cursor.close()
+
     def delete_task(self, task_id: int) -> None:
         with self.db.connect() as connection:
             cursor = connection.cursor()
             cursor.execute("DELETE FROM tasks WHERE id = %s", (task_id,))
+            cursor.close()
+
+    def delete_all_tasks(self) -> None:
+        with self.db.connect() as connection:
+            cursor = connection.cursor()
+            cursor.execute("DELETE FROM tasks")
             cursor.close()
 
     def set_task_completed(self, task_id: int, completed: bool) -> None:
@@ -324,7 +350,7 @@ class TaskService:
     def get_next_attention_task(self) -> Optional[dict[str, Any]]:
         query = """
             SELECT id, title, priority, mode, status, reminder_at, next_check_at,
-                   last_progress_at, snooze_count
+                   last_progress_at, snooze_count, created_at, completed_at
             FROM tasks
             WHERE status <> 'COMPLETED'
               AND (
@@ -341,6 +367,8 @@ class TaskService:
             cursor.execute(query)
             row = cursor.fetchone()
             cursor.close()
+        if row:
+            row["micro_actions"] = []
         return row
 
     def get_due_reminders(self) -> list[dict[str, Any]]:

@@ -16,13 +16,17 @@ class DatabaseConfigError(Exception):
 
 def _load_env() -> None:
     root = Path(__file__).resolve().parents[1]
+    user_data = os.getenv("RED_ROADMAP_USER_DATA", "")
+    resources_path = os.getenv("RED_ROADMAP_RESOURCES_PATH", "")
     candidates = [
+        Path(user_data) / ".env" if user_data else None,
+        Path(resources_path) / ".env" if resources_path else None,
         root / "backend" / ".env",
         root / "red_roadmap" / ".env",
         root / ".env",
     ]
     for path in candidates:
-        if path.exists():
+        if path is not None and path.exists():
             load_dotenv(path)
             return
     load_dotenv()

@@ -15,6 +15,7 @@
     "build": "npm run build:frontend && npm run build:backend && npm run build:electron"
   },
   "devDependencies": {
+    "@electron/fuses": "^2.1.1",
     "concurrently": "^9.1.0",
     "electron": "^33.2.1",
     "electron-builder": "^25.1.8",
@@ -31,6 +32,7 @@
       "frontend/dist/**/*",
       "package.json"
     ],
+    "afterPack": "scripts/afterPack.js",
     "extraResources": [
       {
         "from": "desktop/backend-dist",

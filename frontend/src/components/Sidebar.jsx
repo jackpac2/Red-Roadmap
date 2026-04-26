@@ -1,4 +1,4 @@
-import { BarChart3, CalendarClock, CheckCircle2, Gauge, Map, Settings } from "lucide-react";
+import { BarChart3, CalendarClock, CheckCircle2, Gauge, Map, Settings, TimerReset } from "lucide-react";
 
 const nav = [
   ["Dashboard", Gauge],
@@ -11,11 +11,11 @@ const nav = [
 
 export function Sidebar() {
   return (
-    <aside className="hidden min-h-screen w-64 shrink-0 border-r border-line/80 bg-ink/95 px-4 py-5 lg:block">
+    <aside className="hidden min-h-screen w-64 shrink-0 border-r border-line/70 bg-black/25 px-4 py-5 backdrop-blur lg:block">
       <div className="mb-8 flex items-center gap-3">
-        <div className="grid h-10 w-10 place-items-center rounded-lg border border-neon/70 bg-neon/10 text-neon shadow-neon">R</div>
+        <div className="grid h-11 w-11 place-items-center rounded-lg border border-neon/70 bg-gradient-to-br from-neon/25 to-cyanLine/15 text-xl font-black text-neon shadow-neon">R</div>
         <div>
-          <div className="text-sm font-black tracking-[0.25em] text-text">RED</div>
+          <div className="text-sm font-black text-text">RED</div>
           <div className="text-xs font-semibold text-muted">ROADMAP</div>
         </div>
       </div>
@@ -34,6 +34,11 @@ export function Sidebar() {
           </button>
         ))}
       </nav>
+      <div className="mt-8 rounded-lg border border-neon/30 bg-neon/10 p-4">
+        <TimerReset size={24} className="mb-3 text-neon" />
+        <div className="text-sm font-black text-text">Stay focused.</div>
+        <div className="mt-1 text-xs font-semibold text-muted">Execute daily. Win consistently.</div>
+      </div>
     </aside>
   );
 }

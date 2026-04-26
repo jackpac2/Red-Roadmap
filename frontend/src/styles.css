@@ -13,6 +13,12 @@ body {
   font-family: Inter, "Segoe UI", system-ui, sans-serif;
 }
 
+button,
+input,
+select {
+  font: inherit;
+}
+
 @layer components {
   .badge {
     @apply rounded-md border px-2.5 py-1 text-xs font-black uppercase;
@@ -20,7 +26,7 @@ body {
 
   .control,
   .field {
-    @apply rounded-lg border border-cyanLine/50 bg-ink px-3 py-2 text-sm font-semibold text-text outline-none transition placeholder:text-muted focus:border-neon;
+    @apply rounded-lg border border-cyanLine/50 bg-ink/90 px-3 py-2 text-sm font-semibold text-text outline-none transition placeholder:text-muted focus:border-neon;
   }
 
   .field {
@@ -28,7 +34,7 @@ body {
   }
 
   .icon-btn {
-    @apply inline-grid h-9 w-9 place-items-center rounded-lg border border-line bg-panelSoft text-muted transition hover:border-neon/60 hover:text-text;
+    @apply inline-grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-line bg-panelSoft/90 text-muted transition hover:border-neon/60 hover:text-text;
   }
 
   .icon-btn.primary {
