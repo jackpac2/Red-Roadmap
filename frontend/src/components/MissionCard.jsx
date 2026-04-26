@@ -3,8 +3,8 @@ import { StepList } from "./StepList.jsx";
 
 const priorityClass = {
   HIGH: "border-rose-400/70 bg-rose-500/10 text-rose-100",
-  MEDIUM: "border-cyanLine/70 bg-cyanLine/10 text-blue-100",
-  LOW: "border-emerald-400/60 bg-emerald-400/10 text-emerald-100"
+  MEDIUM: "border-gold/70 bg-gold/10 text-neonSoft",
+  LOW: "border-moss/70 bg-moss/15 text-emerald-100"
 };
 
 function reminderStatus(reminderAt, status) {
@@ -28,7 +28,7 @@ export function MissionCard({ mission, actions }) {
     <article className={`rounded-lg border p-4 shadow-panel transition ${
       completed
         ? "border-emerald-400/70 bg-emerald-400/10 shadow-[0_18px_60px_rgba(16,185,129,0.14)] hover:border-emerald-300"
-        : "border-line bg-panel/95 hover:border-neon/50"
+        : "border-line bg-panel/85 hover:border-neon/50"
     }`}>
       <div className="flex flex-col gap-3 xl:flex-row xl:items-start">
         <div className="min-w-0 flex-1">

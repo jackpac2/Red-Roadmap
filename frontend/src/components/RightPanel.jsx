@@ -1,4 +1,4 @@
-import { Flame, Pause, PieChart, Play, Settings, TimerReset, Trophy } from "lucide-react";
+import { Leaf, PieChart, Play, Settings, TimerReset } from "lucide-react";
 import { useMemo, useState } from "react";
 
 const priorities = ["HIGH", "MEDIUM", "LOW"];
@@ -19,9 +19,9 @@ export function RightPanel({ missions, progress }) {
 
   return (
     <aside className="space-y-4">
-      <section className="rounded-lg border border-line bg-panel/95 p-4 shadow-panel">
+      <section className="rounded-lg border border-line bg-panel/85 p-5 shadow-panel">
         <div className="mb-4 flex items-center justify-between">
-          <div className="text-sm font-black uppercase text-text">Focus Timer</div>
+          <div className="text-base font-black uppercase text-text">Focus Timer</div>
           <Settings size={16} className="text-muted" />
         </div>
         <div className="flex gap-2">
@@ -29,27 +29,27 @@ export function RightPanel({ missions, progress }) {
             <button
               key={value}
               onClick={() => setMinutes(value)}
-              className={`flex-1 rounded-lg border px-2 py-2 text-xs font-black transition ${
-                minutes === value ? "border-neon bg-neon/15 text-neonSoft" : "border-line bg-ink/70 text-muted hover:border-cyanLine"
+              className={`flex-1 rounded-lg border px-2 py-2.5 text-xs font-black transition ${
+                minutes === value ? "border-neon bg-neon text-ink shadow-neon" : "border-line bg-ink/70 text-muted hover:border-neon hover:text-text"
               }`}
             >
               {value} min
             </button>
           ))}
         </div>
-        <div className="py-6 text-center">
-          <TimerReset size={28} className="mx-auto mb-2 text-neon" />
-          <div className="text-4xl font-black text-neonSoft">{String(minutes).padStart(2, "0")}:00</div>
-          <div className="mt-1 text-xs font-semibold text-muted">Ready to focus</div>
+        <div className="py-7 text-center">
+          <Leaf size={30} className="mx-auto mb-3 text-neon" />
+          <div className="text-5xl font-black leading-none text-text">{String(minutes).padStart(2, "0")}:00</div>
+          <div className="mt-2 text-sm font-semibold text-neonSoft">Ready to focus</div>
         </div>
         <button className="btn-primary inline-flex w-full items-center justify-center gap-2">
           <Play size={16} /> Start
         </button>
       </section>
 
-      <section className="rounded-lg border border-line bg-panel/95 p-4 shadow-panel">
-        <div className="mb-4 flex items-center gap-2 text-sm font-black uppercase text-text">
-          <PieChart size={16} className="text-neon" /> Priority Breakdown
+      <section className="rounded-lg border border-line bg-panel/85 p-5 shadow-panel">
+        <div className="mb-4 flex items-center gap-2 text-base font-black uppercase text-text">
+          <PieChart size={17} className="text-gold" /> Priority Breakdown
         </div>
         <div className="space-y-3">
           {breakdown.map((item) => (
@@ -58,9 +58,9 @@ export function RightPanel({ missions, progress }) {
                 <span>{item.priority}</span>
                 <span>{item.percent}% ({item.count})</span>
               </div>
-              <div className="h-2 overflow-hidden rounded-full bg-ink">
+              <div className="h-2 overflow-hidden rounded-full bg-line/70">
                 <div
-                  className={`h-full rounded-full ${item.priority === "HIGH" ? "bg-neon" : item.priority === "MEDIUM" ? "bg-cyanLine" : "bg-emerald-400"}`}
+                  className={`h-full rounded-full ${item.priority === "HIGH" ? "bg-gold" : item.priority === "MEDIUM" ? "bg-neon" : "bg-moss"}`}
                   style={{ width: `${item.percent}%` }}
                 />
               </div>
@@ -69,29 +69,16 @@ export function RightPanel({ missions, progress }) {
         </div>
       </section>
 
-      <section className="rounded-lg border border-line bg-panel/95 p-4 shadow-panel">
-        <div className="mb-4 flex items-center gap-2 text-sm font-black uppercase text-text">
-          <Trophy size={16} className="text-neon" /> Streak
+      <section className="rounded-lg border border-line bg-panel/85 p-5 shadow-panel">
+        <div className="mb-4 flex items-center gap-2 text-base font-black uppercase text-text">
+          <TimerReset size={17} className="text-gold" /> Daily Trail
         </div>
-        <div className="flex items-end gap-4">
-          <div>
-            <div className="flex items-center gap-2 text-3xl font-black text-text">
-              <Flame size={26} className="text-neon" /> {streak}
-            </div>
-            <div className="text-xs font-semibold text-muted">days tracked</div>
-          </div>
-          <div className="flex flex-1 items-end gap-2 border-l border-line pl-4">
-            {Array.from({ length: 7 }).map((_, index) => (
-              <div
-                key={index}
-                className={`h-14 flex-1 rounded-full ${index < streak ? "bg-neon shadow-neon" : "bg-ink"}`}
-                style={{ opacity: index < streak ? 0.62 + index * 0.05 : 1 }}
-              />
-            ))}
-          </div>
-        </div>
-        <div className="mt-4 flex items-center gap-2 text-xs font-semibold text-muted">
-          <Pause size={14} /> {completed}/{total} missions completed
+        <div className="text-3xl font-black text-text">{streak}/7</div>
+        <div className="mt-1 text-sm font-semibold text-muted">{completed}/{total} missions completed</div>
+        <div className="mt-4 grid grid-cols-7 gap-2">
+          {Array.from({ length: 7 }).map((_, index) => (
+            <div key={index} className={`h-12 rounded-full ${index < streak ? "bg-neon shadow-neon" : "bg-ink/90"}`} />
+          ))}
         </div>
       </section>
     </aside>

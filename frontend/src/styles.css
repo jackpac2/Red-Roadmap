@@ -9,7 +9,9 @@
 body {
   margin: 0;
   min-width: 320px;
-  background: #050713;
+  background:
+    radial-gradient(circle at top left, rgba(198, 154, 73, 0.12), transparent 32rem),
+    linear-gradient(135deg, #050806 0%, #0b130d 48%, #12180f 100%);
   font-family: Inter, "Segoe UI", system-ui, sans-serif;
 }
 
@@ -21,12 +23,12 @@ select {
 
 @layer components {
   .badge {
-    @apply rounded-md border px-2.5 py-1 text-xs font-black uppercase;
+    @apply rounded-md border px-2.5 py-1 text-xs font-black uppercase tracking-normal;
   }
 
   .control,
   .field {
-    @apply rounded-lg border border-cyanLine/50 bg-ink/90 px-3 py-2 text-sm font-semibold text-text outline-none transition placeholder:text-muted focus:border-neon;
+    @apply rounded-lg border border-line bg-ink/85 px-3 py-2 text-sm font-semibold text-text outline-none transition placeholder:text-muted focus:border-neon;
   }
 
   .field {
@@ -34,7 +36,7 @@ select {
   }
 
   .icon-btn {
-    @apply inline-grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-line bg-panelSoft/90 text-muted transition hover:border-neon/60 hover:text-text;
+    @apply inline-grid h-9 w-9 shrink-0 place-items-center rounded-lg border border-line bg-panelSoft/90 text-muted transition hover:border-neon/60 hover:bg-neon/10 hover:text-text;
   }
 
   .icon-btn.primary {
@@ -50,6 +52,10 @@ select {
   }
 
   .btn-secondary {
-    @apply rounded-lg border border-line bg-panelSoft px-4 py-2 text-sm font-bold text-muted transition hover:border-cyanLine hover:text-text;
+    @apply rounded-lg border border-line bg-panelSoft px-4 py-2 text-sm font-bold text-muted transition hover:border-neon hover:text-text;
+  }
+
+  .forest-card {
+    @apply rounded-lg border border-line bg-panel/90 shadow-panel;
   }
 }

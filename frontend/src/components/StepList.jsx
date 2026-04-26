@@ -16,7 +16,7 @@ export function StepList({ mission, onAddStep, onCompleteStep, onUpdateStep, onD
     <div className="mt-3 border-t border-line/70 pt-3">
       <div className="space-y-2">
         {steps.map((step) => (
-          <div key={step.id} className="flex items-center gap-2 rounded-lg bg-ink/80 px-3 py-2">
+          <div key={step.id} className="flex items-center gap-2 rounded-lg border border-line/60 bg-ink/70 px-3 py-2">
             <button onClick={() => onCompleteStep(step.id, !step.completed)} className={`icon-btn ${step.completed ? "text-emerald-300" : "text-muted"}`} title="Complete step">
               <Check size={16} />
             </button>

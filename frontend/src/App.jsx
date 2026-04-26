@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { AlarmClock, Bell, BellOff, Clock3 } from "lucide-react";
+import { AlarmClock, Bell, BellOff, Clock3, TreePine } from "lucide-react";
 import { FilterBar } from "./components/FilterBar.jsx";
 import { Header } from "./components/Header.jsx";
 import { MissionCard } from "./components/MissionCard.jsx";
@@ -164,25 +164,33 @@ export function App() {
   };
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(135deg,#030511_0%,#070b1a_46%,#10142a_100%)] text-text">
+    <div className="min-h-screen bg-[radial-gradient(circle_at_top_left,rgba(198,154,73,0.12),transparent_34rem),linear-gradient(135deg,#050806_0%,#0b130d_50%,#12180f_100%)] text-text">
       <div className="flex">
         <Sidebar />
-        <main className="min-w-0 flex-1 p-4 lg:p-6">
-          <div className="mx-auto max-w-[1500px] space-y-4">
+        <main className="min-w-0 flex-1 p-4 lg:p-8">
+          <div className="mx-auto max-w-[1540px] space-y-4">
             <Header now={now} score={score} onCreate={openCreate} onDeleteAll={deleteAll} hasMissions={missions.length > 0} />
             {error && <div className="rounded-lg border border-rose-400/60 bg-rose-500/10 px-4 py-3 text-sm font-semibold text-rose-100">{error}</div>}
             <StatsCards stats={stats} />
             <ProgressBar progress={progress} />
-            <div className="grid gap-4 2xl:grid-cols-[300px_minmax(0,1fr)_280px]">
+            <div className="grid gap-4 2xl:grid-cols-[320px_minmax(0,1fr)_300px]">
               <MissionTimeline items={timeline} />
               <section className="space-y-3">
                 <FilterBar query={query} setQuery={setQuery} status={status} setStatus={setStatus} priority={priority} setPriority={setPriority} />
                 {loading ? (
-                  <div className="rounded-lg border border-line bg-panel p-8 text-center font-semibold text-muted">Loading missions...</div>
+                  <div className="rounded-lg border border-line bg-panel/80 p-8 text-center font-semibold text-muted shadow-panel">Loading missions...</div>
                 ) : (
-                  <div className="space-y-3">
+                  <div className="min-h-[330px] space-y-3 rounded-lg border border-line bg-panel/60 p-3 shadow-panel">
                     {filtered.map((mission) => <MissionCard key={mission.id} mission={mission} actions={actions} />)}
-                    {!filtered.length && <div className="rounded-lg border border-line bg-panel p-8 text-center font-semibold text-muted">No missions found.</div>}
+                    {!filtered.length && (
+                      <div className="grid min-h-[300px] place-items-center rounded-lg border border-line/80 bg-[radial-gradient(circle_at_center,rgba(183,168,91,0.10),transparent_18rem)] p-8 text-center">
+                        <div>
+                          <TreePine size={70} className="mx-auto mb-5 text-neon/70" />
+                          <div className="text-xl font-black text-text">No missions found.</div>
+                          <div className="mt-3 text-sm font-semibold text-neonSoft">Create your first mission to get started.</div>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 )}
               </section>

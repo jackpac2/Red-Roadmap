@@ -1,4 +1,6 @@
-import { BarChart3, CalendarClock, CheckCircle2, Gauge, Map, Settings, TimerReset } from "lucide-react";
+import { BarChart3, CalendarClock, CheckCircle2, Gauge, Map, Settings, TreePine } from "lucide-react";
+import forestSidebar from "../assets/forest-sidebar.png";
+import roadmapEmblem from "../assets/roadmap-emblem.png";
 
 const nav = [
   ["Dashboard", Gauge],
@@ -11,22 +13,22 @@ const nav = [
 
 export function Sidebar() {
   return (
-    <aside className="hidden min-h-screen w-64 shrink-0 border-r border-line/70 bg-black/25 px-4 py-5 backdrop-blur lg:block">
-      <div className="mb-8 flex items-center gap-3">
-        <div className="grid h-11 w-11 place-items-center rounded-lg border border-neon/70 bg-gradient-to-br from-neon/25 to-cyanLine/15 text-xl font-black text-neon shadow-neon">R</div>
+    <aside className="hidden min-h-screen w-64 shrink-0 border-r border-line bg-ink/92 px-4 py-6 backdrop-blur lg:block">
+      <div className="mb-9 flex items-center gap-3 px-1">
+        <img src={roadmapEmblem} alt="" className="h-14 w-14 rounded-full border border-neon/50 object-cover shadow-neon" />
         <div>
-          <div className="text-sm font-black text-text">RED</div>
-          <div className="text-xs font-semibold text-muted">ROADMAP</div>
+          <div className="text-lg font-black leading-tight text-text">RED</div>
+          <div className="text-sm font-black leading-tight text-neonSoft">ROADMAP</div>
         </div>
       </div>
       <nav className="space-y-2">
         {nav.map(([label, Icon], index) => (
           <button
             key={label}
-            className={`flex w-full items-center gap-3 rounded-lg border px-3 py-2.5 text-left text-sm font-semibold transition ${
+            className={`flex w-full items-center gap-4 rounded-lg border px-4 py-3 text-left text-sm font-black transition ${
               index === 0
-                ? "border-neon/60 bg-neon/10 text-text shadow-neon"
-                : "border-transparent text-muted hover:border-cyanLine/50 hover:bg-panelSoft hover:text-text"
+                ? "border-neon/45 bg-neon/20 text-text shadow-neon"
+                : "border-transparent text-neonSoft/85 hover:border-line hover:bg-panelSoft/80 hover:text-text"
             }`}
           >
             <Icon size={18} />
@@ -34,10 +36,20 @@ export function Sidebar() {
           </button>
         ))}
       </nav>
-      <div className="mt-8 rounded-lg border border-neon/30 bg-neon/10 p-4">
-        <TimerReset size={24} className="mb-3 text-neon" />
-        <div className="text-sm font-black text-text">Stay focused.</div>
-        <div className="mt-1 text-xs font-semibold text-muted">Execute daily. Win consistently.</div>
+      <div
+        className="relative mt-9 min-h-[360px] overflow-hidden rounded-lg border border-line bg-cover bg-center p-5 shadow-panel"
+        style={{ backgroundImage: `url(${forestSidebar})` }}
+      >
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgba(8,13,8,0.60),rgba(8,13,8,0.28)_42%,rgba(7,10,7,0.88))]" />
+        <div className="relative flex h-full min-h-[320px] flex-col items-center justify-center text-center">
+          <TreePine size={42} className="mb-6 text-neon/75" />
+          <div className="text-xl font-black leading-tight text-text">
+            Focus today,
+            <br />
+            build tomorrow.
+          </div>
+          <div className="mt-6 max-w-[150px] text-sm font-semibold leading-relaxed text-neonSoft/90">Consistency is your compass.</div>
+        </div>
       </div>
     </aside>
   );
