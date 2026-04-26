@@ -1,0 +1,49 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  background: #050713;
+  font-family: Inter, "Segoe UI", system-ui, sans-serif;
+}
+
+@layer components {
+  .badge {
+    @apply rounded-md border px-2.5 py-1 text-xs font-black uppercase;
+  }
+
+  .control,
+  .field {
+    @apply rounded-lg border border-cyanLine/50 bg-ink px-3 py-2 text-sm font-semibold text-text outline-none transition placeholder:text-muted focus:border-neon;
+  }
+
+  .field {
+    @apply w-full;
+  }
+
+  .icon-btn {
+    @apply inline-grid h-9 w-9 place-items-center rounded-lg border border-line bg-panelSoft text-muted transition hover:border-neon/60 hover:text-text;
+  }
+
+  .icon-btn.primary {
+    @apply border-neon/70 bg-neon/10 text-neonSoft;
+  }
+
+  .icon-btn.danger {
+    @apply hover:border-rose-400/70 hover:text-rose-200;
+  }
+
+  .btn-primary {
+    @apply rounded-lg border border-neon bg-neon px-4 py-2 text-sm font-black text-ink shadow-neon transition hover:bg-neonSoft;
+  }
+
+  .btn-secondary {
+    @apply rounded-lg border border-line bg-panelSoft px-4 py-2 text-sm font-bold text-muted transition hover:border-cyanLine hover:text-text;
+  }
+}
