@@ -130,6 +130,45 @@ The FastAPI backend exposes:
 
 ## Notes
 
+<<<<<<< HEAD
 - The PySide app has not been deleted or rewired.
 - The new backend reads `backend/.env`, `red_roadmap/.env`, or root `.env`, in that order.
 - The Electron alert/audio experience is not yet a fullscreen replacement for the old PySide alert window; the backend exposes the reminder action endpoints needed to build that UI next.
+=======
+## GitHub Actions (Windows build)
+
+This repo includes:
+
+- `.github/workflows/build-windows.yml`
+
+It builds a Windows EXE and uploads it as a workflow artifact.
+
+Required GitHub secrets:
+
+- `DB_HOST`
+- `DB_PORT`
+- `DB_USER`
+- `DB_PASSWORD`
+- `DB_NAME`
+
+## Troubleshooting
+
+- `Could not connect to MySQL`: verify `.env` values and ensure MySQL is running.
+- No alert appears: confirm a task has a due `reminder_at` or due `next_check_at`.
+- No audio: on non-Windows systems it falls back to app beep.
+- Scroll feels limited: increase app window height and ensure mission list has focus.
+
+## License
+
+This project was created for academic purposes and does not currently use an open-source license.
+
+## Screenshots
+
+### Alarm Reminder
+
+![Main Dashboard](screenshots/Screenshot%202026-04-25%20215100.png)
+
+### Roadmap View
+
+![Roadmap View](screenshots/Screenshot%202026-04-25%20215042.png)
+>>>>>>> f63559ba7db46b90508946a9a32599916f3a6bee
