@@ -30,10 +30,10 @@ export function MissionCard({ mission, actions }) {
         ? "border-emerald-400/70 bg-emerald-400/10 shadow-[0_18px_60px_rgba(16,185,129,0.14)] hover:border-emerald-300"
         : "border-line bg-panel/85 hover:border-neon/50"
     }`}>
-      <div className="flex flex-col gap-3 xl:flex-row xl:items-start">
-        <div className="min-w-0 flex-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h3 className="min-w-0 flex-1 truncate text-lg font-black text-text">{title}</h3>
+      <div className="flex flex-col gap-3">
+        <h3 className="min-w-0 break-words text-lg font-black leading-snug text-text" title={title}>{title}</h3>
+        <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+          <div className="flex min-w-0 flex-wrap items-center gap-2">
             <span className={`badge ${priorityClass[priority] || ""}`}>{priority}</span>
             <span className="badge border-line bg-panelSoft text-muted">{mode}</span>
             <span className={`badge ${completed ? "border-emerald-400/70 bg-emerald-400/15 text-emerald-100" : "border-neon/50 bg-neon/10 text-neonSoft"}`}>{status}</span>
@@ -42,12 +42,12 @@ export function MissionCard({ mission, actions }) {
             </span>
             {snoozeCount > 0 && <span className="badge border-purple-400/50 bg-purple-500/10 text-purple-100">Snoozed {snoozeCount}</span>}
           </div>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <button onClick={() => actions.start(mission.id)} className="icon-btn" title="Start mission"><Play size={16} /></button>
-          <button onClick={() => actions.complete(mission.id, status !== "COMPLETED")} className="icon-btn primary" title="Complete mission"><CheckCircle2 size={16} /></button>
-          <button onClick={() => actions.edit(mission)} className="icon-btn" title="Edit mission"><Pencil size={16} /></button>
-          <button onClick={() => actions.delete(mission.id)} className="icon-btn danger" title="Delete mission"><Trash2 size={16} /></button>
+          <div className="flex shrink-0 flex-wrap gap-2 lg:justify-end">
+            <button onClick={() => actions.start(mission.id)} className="icon-btn" title="Start mission"><Play size={16} /></button>
+            <button onClick={() => actions.complete(mission.id, status !== "COMPLETED")} className="icon-btn primary" title="Complete mission"><CheckCircle2 size={16} /></button>
+            <button onClick={() => actions.edit(mission)} className="icon-btn" title="Edit mission"><Pencil size={16} /></button>
+            <button onClick={() => actions.delete(mission.id)} className="icon-btn danger" title="Delete mission"><Trash2 size={16} /></button>
+          </div>
         </div>
       </div>
       <StepList

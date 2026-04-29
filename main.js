@@ -480,7 +480,7 @@ async function fetchDueReminders() {
 }
 
 function reminderKey(mission) {
-  return `${mission.id}:${mission.reminder_at || ""}`;
+  return `${mission.id}:${mission.next_check_at || mission.reminder_at || mission.status || ""}`;
 }
 
 function createAlertWindow(mission) {
@@ -502,7 +502,7 @@ function createAlertWindow(mission) {
     maximizable: false,
     alwaysOnTop: true,
     center: true,
-    backgroundColor: "#050713",
+    backgroundColor: "#050806",
     show: false,
     title: "Mission Alert",
     webPreferences: {
@@ -556,7 +556,7 @@ function playSystemAlarmOnce(mission, key) {
       [
         "-NoProfile",
         "-Command",
-        "try { [System.Media.SystemSounds]::Exclamation.Play() } catch {}; try { [console]::beep(1000, 450) } catch {}; Start-Sleep -Milliseconds 650"
+        "try { [console]::beep(1000, 450) } catch {}; Start-Sleep -Milliseconds 650"
       ],
       { windowsHide: true }
     );
@@ -590,7 +590,7 @@ function alertHtml({ mission }) {
   const title = escapeHtml(mission?.title || "Untitled mission");
   const priority = escapeHtml(mission?.priority || "MEDIUM");
   const mode = escapeHtml(String(mission?.mode || "FLEXIBLE").replace("_", " "));
-  const reminderAt = escapeHtml(formatReminderTime(mission?.reminder_at));
+  const alarmAt = escapeHtml(formatReminderTime(mission?.next_check_at || mission?.reminder_at));
 
   return `<!doctype html>
 <html>
@@ -605,21 +605,23 @@ function alertHtml({ mission }) {
         min-height: 100vh;
         display: grid;
         place-items: center;
-        background: #050713;
-        color: #eaf1ff;
+        background:
+          radial-gradient(circle at top left, rgba(198, 154, 73, 0.14), transparent 34rem),
+          linear-gradient(135deg, #050806 0%, #0b130d 48%, #12180f 100%);
+        color: #f3ead7;
         font-family: Inter, "Segoe UI", system-ui, sans-serif;
       }
       main {
         width: min(920px, calc(100vw - 48px));
-        border: 1px solid #2f7ce8;
+        border: 1px solid #3a422f;
         border-radius: 8px;
-        background: #0a1020;
+        background: rgba(17, 26, 18, 0.94);
         padding: 48px;
-        box-shadow: 0 18px 60px rgba(0, 0, 0, 0.45), 0 0 28px rgba(255, 79, 207, 0.18);
+        box-shadow: 0 18px 60px rgba(0, 0, 0, 0.38), 0 0 26px rgba(198, 154, 73, 0.16);
       }
       .label {
         margin-bottom: 10px;
-        color: #91a7d0;
+        color: #b7aa8a;
         font-size: 12px;
         font-weight: 800;
         letter-spacing: 0.08em;
@@ -627,13 +629,13 @@ function alertHtml({ mission }) {
       }
       h1 {
         margin: 0 0 12px;
-        color: #ff4fcf;
+        color: #eadfb7;
         font-size: clamp(48px, 8vw, 96px);
         line-height: 1.1;
       }
       p {
         margin: 0 0 30px;
-        color: #91a7d0;
+        color: #b7aa8a;
         font-size: 18px;
         font-weight: 600;
       }
@@ -644,13 +646,13 @@ function alertHtml({ mission }) {
         margin: 0 0 24px;
       }
       .meta-item {
-        border: 1px solid #263b72;
+        border: 1px solid #3a422f;
         border-radius: 8px;
-        background: #0e1830;
+        background: rgba(26, 36, 24, 0.9);
         padding: 14px 16px;
       }
       .meta-label {
-        color: #91a7d0;
+        color: #b7aa8a;
         font-size: 11px;
         font-weight: 900;
         letter-spacing: 0.08em;
@@ -658,16 +660,16 @@ function alertHtml({ mission }) {
       }
       .meta-value {
         margin-top: 6px;
-        color: #eaf1ff;
+        color: #f3ead7;
         font-size: 16px;
         font-weight: 900;
       }
       .warning {
         margin: 0 0 24px;
-        border: 1px solid #fbbf24;
+        border: 1px solid #c69a49;
         border-radius: 8px;
-        background: rgba(251, 191, 36, 0.12);
-        color: #fde68a;
+        background: rgba(198, 154, 73, 0.12);
+        color: #eadfb7;
         padding: 14px 16px;
         font-size: 15px;
         font-weight: 800;
@@ -679,23 +681,23 @@ function alertHtml({ mission }) {
       }
       button {
         height: 56px;
-        border: 1px solid #2f7ce8;
+        border: 1px solid #3a422f;
         border-radius: 8px;
-        background: #0e1830;
-        color: #eaf1ff;
+        background: #1a2418;
+        color: #f3ead7;
         font: inherit;
         font-size: 16px;
         font-weight: 900;
         cursor: pointer;
       }
       button.primary {
-        border-color: #ff4fcf;
-        background: #ff4fcf;
-        color: #050713;
-        box-shadow: 0 0 26px rgba(255, 79, 207, 0.22);
+        border-color: #b7a85b;
+        background: #b7a85b;
+        color: #07100b;
+        box-shadow: 0 0 26px rgba(198, 154, 73, 0.16);
       }
       button:hover {
-        border-color: #ff86dd;
+        border-color: #eadfb7;
       }
       @media (max-width: 720px) {
         main {
@@ -725,15 +727,15 @@ function alertHtml({ mission }) {
           <div class="meta-value">${mode}</div>
         </div>
         <div class="meta-item">
-          <div class="meta-label">Reminder Time</div>
-          <div class="meta-value">${reminderAt}</div>
+          <div class="meta-label">Alarm Time</div>
+          <div class="meta-value">${alarmAt}</div>
         </div>
       </div>
       <div class="actions">
         <button class="primary" onclick="selectAction('start')">Start</button>
         <button onclick="selectAction('snooze')">Snooze</button>
+        <button onclick="selectAction('away')">Away</button>
         <button onclick="selectAction('complete')">Complete</button>
-        <button onclick="selectAction('dismiss')">Dismiss</button>
       </div>
     </main>
     <script>
@@ -782,9 +784,14 @@ async function applyReminderAction(action) {
     } else if (action === "snooze") {
       await requestJson(`/api/missions/${mission.id}/snooze`, {
         method: "POST",
-        body: JSON.stringify({ minutes: 5 })
+        body: JSON.stringify({ minutes: 10 })
       });
-    } else if (action !== "dismiss") {
+    } else if (action === "away") {
+      await requestJson(`/api/missions/${mission.id}/alert-action`, {
+        method: "POST",
+        body: JSON.stringify({ action: "away" })
+      });
+    } else {
       return;
     }
   } catch (error) {

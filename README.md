@@ -171,4 +171,3 @@ This project was created for academic purposes and does not currently use an ope
 ### Roadmap View
 
 ![Roadmap View](screenshots/Screenshot%202026-04-25%20215042.png)
->>>>>>> f63559ba7db46b90508946a9a32599916f3a6bee

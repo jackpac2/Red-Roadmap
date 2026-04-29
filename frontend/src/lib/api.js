@@ -35,7 +35,7 @@ export const api = {
     request(`/api/missions/${id}`, { method: "PATCH", body: JSON.stringify({ reminder_at: reminderAt }) }),
   clearReminder: (id) =>
     request(`/api/missions/${id}`, { method: "PATCH", body: JSON.stringify({ clear_reminder: true }) }),
-  snoozeMission: (id, minutes = 5) =>
+  snoozeMission: (id, minutes = 10) =>
     request(`/api/missions/${id}/snooze`, { method: "POST", body: JSON.stringify({ minutes }) }),
   deleteMission: (id) => request(`/api/missions/${id}`, { method: "DELETE" }),
   deleteAllMissions: () => request("/api/missions", { method: "DELETE" }),

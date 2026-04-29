@@ -175,6 +175,7 @@ class TaskService:
                 UPDATE tasks
                 SET status = 'ACTIVE',
                     last_progress_at = NOW(),
+                    reminder_at = NULL,
                     next_check_at = DATE_ADD(NOW(), INTERVAL 15 MINUTE)
                 WHERE id = %s
                 """,
@@ -357,7 +358,6 @@ class TaskService:
                     (status = 'PENDING' AND reminder_at IS NOT NULL AND reminder_at <= NOW())
                  OR (status = 'ACTIVE' AND next_check_at IS NOT NULL AND next_check_at <= NOW()
                      AND (last_progress_at IS NULL OR TIMESTAMPDIFF(MINUTE, last_progress_at, NOW()) >= 15))
-                 OR (status = 'AWAY' AND next_check_at IS NOT NULL AND next_check_at <= NOW())
               )
             ORDER BY COALESCE(next_check_at, reminder_at, NOW()) ASC, created_at ASC
             LIMIT 1
@@ -391,7 +391,7 @@ class TaskService:
             row["micro_actions"] = []
         return rows
 
-    def snooze_task(self, task_id: int, minutes: int = 5) -> None:
+    def snooze_task(self, task_id: int, minutes: int = 10) -> None:
         with self.db.connect() as connection:
             cursor = connection.cursor()
             cursor.execute(
@@ -411,20 +411,20 @@ class TaskService:
         actions = {
             "start": """
                 UPDATE tasks SET status = 'ACTIVE', last_progress_at = NOW(),
-                    next_check_at = DATE_ADD(NOW(), INTERVAL 15 MINUTE) WHERE id = %s
+                    reminder_at = NULL, next_check_at = DATE_ADD(NOW(), INTERVAL 15 MINUTE) WHERE id = %s
             """,
             "snooze_5": """
                 UPDATE tasks SET snooze_count = snooze_count + 1,
-                    reminder_at = DATE_ADD(NOW(), INTERVAL 5 MINUTE),
+                    reminder_at = DATE_ADD(NOW(), INTERVAL 10 MINUTE),
                     next_check_at = NULL, status = 'PENDING' WHERE id = %s
             """,
             "snooze_15": """
                 UPDATE tasks SET snooze_count = snooze_count + 1,
-                    reminder_at = DATE_ADD(NOW(), INTERVAL 15 MINUTE),
+                    reminder_at = DATE_ADD(NOW(), INTERVAL 10 MINUTE),
                     next_check_at = NULL, status = 'PENDING' WHERE id = %s
             """,
             "away": """
-                UPDATE tasks SET status = 'AWAY',
+                UPDATE tasks SET status = 'AWAY', reminder_at = NULL,
                     next_check_at = DATE_ADD(NOW(), INTERVAL 45 MINUTE) WHERE id = %s
             """,
             "done": """

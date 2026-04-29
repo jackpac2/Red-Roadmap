@@ -23,28 +23,28 @@ class AlertWindow(QWidget):
         self.setStyleSheet(
             """
             QWidget {
-                background-color: #8b000f;
-                color: #ffffff;
+                background-color: #050806;
+                color: #f3ead7;
                 font-family: Segoe UI;
             }
             QLabel#mission {
                 font-size: 70px;
                 font-weight: 800;
-                color: #ffffff;
+                color: #eadfb7;
             }
             QLabel#title {
                 font-size: 52px;
                 font-weight: 700;
-                color: #ffe9ec;
+                color: #f3ead7;
             }
             QLabel#urgency {
                 font-size: 26px;
                 font-weight: 600;
-                color: #fff0f2;
+                color: #b7aa8a;
             }
             QFrame#statusPanel {
-                background: #4f0008;
-                border: 2px solid #ffd7dd;
+                background: #111a12;
+                border: 2px solid #3a422f;
                 border-radius: 12px;
             }
             QLabel#statusText {
@@ -55,13 +55,13 @@ class AlertWindow(QWidget):
                 font-size: 20px;
                 font-weight: 700;
                 padding: 14px 18px;
-                border: 2px solid #fff;
-                background-color: #1e0207;
-                color: white;
+                border: 2px solid #3a422f;
+                background-color: #1a2418;
+                color: #f3ead7;
                 border-radius: 8px;
             }
             QPushButton:hover {
-                background-color: #30040b;
+                border-color: #eadfb7;
             }
             """
         )
@@ -96,20 +96,17 @@ class AlertWindow(QWidget):
         row.setSpacing(16)
 
         start_btn = QPushButton('START NOW')
-        snooze5_btn = QPushButton('SNOOZE 5')
-        snooze15_btn = QPushButton('SNOOZE 15')
+        snooze_btn = QPushButton('SNOOZE 10')
         away_btn = QPushButton('AWAY FROM PC')
         done_btn = QPushButton('MARK COMPLETE')
 
         start_btn.clicked.connect(lambda: self.action_selected.emit('start'))
-        snooze5_btn.clicked.connect(lambda: self.action_selected.emit('snooze_5'))
-        snooze15_btn.clicked.connect(lambda: self.action_selected.emit('snooze_15'))
+        snooze_btn.clicked.connect(lambda: self.action_selected.emit('snooze_5'))
         away_btn.clicked.connect(lambda: self.action_selected.emit('away'))
         done_btn.clicked.connect(lambda: self.action_selected.emit('done'))
 
         row.addWidget(start_btn)
-        row.addWidget(snooze5_btn)
-        row.addWidget(snooze15_btn)
+        row.addWidget(snooze_btn)
         row.addWidget(away_btn)
         row.addWidget(done_btn)
 

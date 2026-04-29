@@ -39,14 +39,12 @@ class AnnoyingAudioPlayer(QObject):
 
     def _run_loop(self, intensity: int) -> None:
         is_windows = platform.system().lower().startswith('win') and winsound is not None
-        delay = max(0.2, 0.8 - (intensity * 0.12))
+        delay = 0.8
 
         while not self._stop_event.is_set():
             if is_windows:
                 try:
-                    freq = 700 + (intensity * 80)
-                    duration = 300 + (intensity * 70)
-                    winsound.Beep(freq, duration)
+                    winsound.Beep(1000, 450)
                 except Exception:
                     self._beep_fallback()
             else:

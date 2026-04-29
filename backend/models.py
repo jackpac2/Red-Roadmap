@@ -98,7 +98,7 @@ class CompleteRequest(BaseModel):
 
 
 class SnoozeRequest(BaseModel):
-    minutes: int = Field(default=5, ge=1, le=240)
+    minutes: int = Field(default=10, ge=1, le=240)
 
 
 class ReminderUpdate(BaseModel):
